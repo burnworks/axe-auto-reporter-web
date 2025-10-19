@@ -49,42 +49,6 @@ After the first report has been generated, you can keep `node script/scheduler.m
 
 Before each execution the scheduler loads `data/settings.json`, gathering the sitemap URL, tags, crawl mode, maximum page count, and frequency (`daily`, `weekly`, or `monthly`). Generated reports are stored under `src/pages/results/` and indexed in `data/reports/index.json`.
 
-## Using Docker
-The provided `Dockerfile` installs Puppeteer dependencies, builds the dashboard, and launches both the web server and the scheduler.
-
-### Build and Run
-Run the following to build the image and start a container:
-
-```sh
-docker build -t axe-auto-reporter-web .
-docker run --rm -p 3000:3000 axe-auto-reporter-web
-```
-
-Stopping this container resets the configuration and generated reports.
-
-#### Persisting Data
-If you want settings and reports to survive container restarts, mount the `data/` directory from the host:
-
-```sh
-docker run --rm -p 3000:3000 -v "$(pwd)/data:/app/data" axe-auto-reporter-web
-```
-
-### Initial Configuration
-After the container starts, open `http://localhost:3000`, navigate to Settings, and save the required fields such as the sitemap URL.
-
-### Scheduler
-Inside the container, `docker-start.sh` keeps `script/scheduler.mjs` running so scheduled accessibility tests continue to fire. The cadence follows the frequency chosen in the Settings screen, with the default cron triggering at 03:00 (Asia/Tokyo).
-
-Once the initial setup is done you can simply leave the container running and wait for the scheduled job to create the first report automatically.
-
-If you need an immediate report, run:
-
-```sh
-docker exec -it <container-name-or-id> node script/scheduler.mjs --once
-```
-
-Replace `<container-name-or-id>` with the value shown by `docker ps`.
-
 ## Notes (as of v1.0.0)
 
 - This application is intended to run on a user's local machine or within a closed server environment. Authentication and authorization features are not built in, so do not deploy it on a publicly accessible server.
