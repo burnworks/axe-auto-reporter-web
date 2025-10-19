@@ -6,7 +6,7 @@
 
 ![axe Auto Reporter Web ダッシュボード スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
 
-![axe Auto Reporter Web レポートページ スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web－02.png)
+![axe Auto Reporter Web レポートページ スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web-02.png)
 
 ## 必要条件
 - Node.js 20.x 以降
