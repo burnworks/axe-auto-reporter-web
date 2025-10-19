@@ -9,7 +9,7 @@
 ![axe Auto Reporter Web レポートページ スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web-02.png)
 
 ## 必要条件
-- Node.js 20.x 以降
+- Node.js 22.x 以降
 - npm 10.x 以降
 
 > [!TIP]
