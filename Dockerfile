@@ -41,7 +41,8 @@ RUN apt-get update \
         libxtst6 \
         wget \
         xdg-utils \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && usermod -a -G audio,video node
 
 ENV NODE_ENV=production \
     ASTRO_TELEMETRY_DISABLED=1 \
@@ -49,13 +50,20 @@ ENV NODE_ENV=production \
     PORT=3000
 
 COPY package*.json ./
+RUN chown -R node:node /app
+
+USER node
 RUN npm install --omit=dev
 
-COPY . .
+USER root
+COPY --chown=node:node . .
 
+USER node
 RUN npm run build
 
 RUN chmod +x docker-start.sh
+
+USER node
 
 EXPOSE 3000
 
