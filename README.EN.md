@@ -19,6 +19,8 @@ This dashboard application uses [@axe-core/puppeteer](https://github.com/dequela
 From the repository root, run:
 
 ```sh
+git clone https://github.com/burnworks/axe-auto-reporter-web.git
+cd axe-auto-reporter-web
 npm install
 ```
 
