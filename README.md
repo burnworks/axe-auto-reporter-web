@@ -4,6 +4,8 @@
 
 [@axe-core/puppeteer](https://github.com/dequelabs/axe-core-npm/blob/develop/packages/puppeteer/README.md) を使用して、指定した `sitemap.xml` 内の URL に対してアクセシビリティテストを自動的に実行、その結果をレポートとして表示するダッシュボードアプリです。
 
+![axe Auto Reporter Web ダッシュボード スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
+
 ## 必要条件
 - Node.js 20.x 以降
 - npm 10.x 以降
