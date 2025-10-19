@@ -41,6 +41,24 @@ const runCommand = (commandPath, args = []) =>
         });
     });
 
+const runNpmCommand = (args = []) =>
+    new Promise((resolve, reject) => {
+        const npmExecutable = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+        const child = spawn(npmExecutable, args, {
+            stdio: 'inherit',
+            cwd: ROOT_DIR,
+            env: process.env
+        });
+
+        child.on('close', (code) => {
+            if (code === 0) {
+                resolve(undefined);
+            } else {
+                reject(new Error(`npm ${args.join(' ')} exited with code ${code}`));
+            }
+        });
+    });
+
 const findLatestRunDirectory = async () => {
     const outputDir = config.outputDirectory;
 
@@ -144,7 +162,7 @@ const runPipeline = async () => {
     await runCommand(commandPaths.summary, ['--path', latestDir]);
 
     console.log('Running npm run build to update static assets...');
-    await runCommand(process.execPath, ['node_modules/npm/bin/npm-cli.js', 'run', 'build']);
+    await runNpmCommand(['run', 'build']);
 
     const finishedAt = new Date().toISOString();
     console.log(`[${finishedAt}] 自動テスト処理が完了しました。`);
