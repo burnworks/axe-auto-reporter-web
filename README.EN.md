@@ -1,22 +1,22 @@
 # axe Auto Reporter Web
 
-This dashboard application uses [@axe-core/puppeteer](https://github.com/dequelabs/axe-core-npm/blob/develop/packages/puppeteer/README.md) to automatically run accessibility tests for the URLs listed in a supplied `sitemap.xml`, then presents the results as reports.
+This dashboard application uses [@axe-core/puppeteer](https://github.com/dequelabs/axe-core-npm/blob/develop/packages/puppeteer/README.md) to crawl the URLs listed in a `sitemap.xml`, execute accessibility audits automatically, and surface the results as reports.
 
 ![axe Auto Reporter Web](./public/img/main-logo.svg)
 
-![axe Auto Reporter Web Screen Shot (dashboard)](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
+![Dashboard screenshot](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
 
-![axe Auto Reporter Web Screen Shot (Report)](./public/img/screen-shot-axe-Auto-Reporter-Web-02.png)
+![Report page screenshot](./public/img/screen-shot-axe-Auto-Reporter-Web-02.png)
 
-## Prerequisites
+## Requirements
 - Node.js 22.x or later
 - npm 10.x or later
 
-> [!TIP]
-> When you run the app on Linux without Docker, Puppeteer may fail if Chromium shared libraries are missing. Consult the project `Dockerfile` for the required packages and install them in advance.
+> [!TIP]  
+> When running on Linux, Chromium dependencies required by Puppeteer might be missing. If you hit runtime errors, install the packages listed in the project `Dockerfile` before running the scripts.
 
 ## Installation
-From the repository root, run:
+Clone the repository, move into it, and install the dependencies.
 
 ```sh
 git clone https://github.com/burnworks/axe-auto-reporter-web.git
@@ -24,37 +24,58 @@ cd axe-auto-reporter-web
 npm install
 ```
 
-## First Launch and Initial Setup
+## Initial Setup & First Report
 
-### 1. First Launch
-Execute the commands below in a terminal, then open `http://localhost:3000` in your browser.  
+### 1. Build and preview the site
+Run the commands below and open `http://localhost:3000` in your browser.
 
 ```sh
 npm run build
 npm run preview -- --host 0.0.0.0 --port 3000
 ```
 
-The initial launch creates the necessary seed files under `data/`.
+The first launch creates the required files under `data/`.
 
-### 2. Setting
-Open the Settings screen, enter the sitemap URL and other required fields, then save. The values are written to `data/settings.json` and `data/url-list.txt`.
+### 2. Configure the settings
+Open the Settings screen, enter the sitemap URL and other required options, and save. The values are written to `data/settings.json` and `data/url-list.txt`.
 
-### 3. Run test
-In another terminal, run `node script/scheduler.mjs --once` to execute the accessibility pipeline with the saved settings (progress appears in the terminal; wait until it finishes).
+### 3. Execute the pipeline once
+Run the following command in another terminal to trigger a one-off crawl with the saved settings (wait until the command completes).
 
-### 4. Start
-Return to the browser and refresh the page to make sure the initial report cards are rendered on the dashboard.
+```sh
+node script/scheduler.mjs --once
+```
 
-After the first report has been generated, you can keep `node script/scheduler.mjs` running (without `--once`) so the cron schedule defined in the script continues producing future reports automatically.
+### 4. Verify the report
+Return to the browser and refresh the page to confirm that the first report cards are displayed.
 
-Before each execution the scheduler loads `data/settings.json`, gathering the sitemap URL, tags, crawl mode, maximum page count, and frequency (`daily`, `weekly`, or `monthly`). Generated reports are stored under `src/pages/results/` and indexed in `data/reports/index.json`.
+### 5. Test scheduling
+After the initial report has been generated you have two options:
+
+1)   
+Keep the scheduler running in another terminal so it follows the frequency selected on the Settings screen.
+
+```sh
+node script/scheduler.mjs
+```
+
+2)   
+Or, schedule the following command with Windows Task Scheduler, macOS launchd, or a similar tool. In this mode the in-app “test frequency” is ignored; configure the interval on the OS side instead.
+
+```sh
+node script/scheduler.mjs --once
+```
+
+If scheduling is troublesome, feel free to run `node script/scheduler.mjs --once` manually whenever you need a fresh report.
+
+The scheduler always reads `data/settings.json` before each run and uses the sitemap URL, tags, crawl mode, maximum pages, and frequency (`daily`, `weekly`, or `monthly`). Generated reports are stored under `src/pages/results/` and indexed in `data/reports/index.json`.
 
 ## Notes (as of v1.0.0)
 
-- This application is intended to run on a user's local machine or within a closed server environment. Authentication and authorization features are not built in, so do not deploy it on a publicly accessible server.
-- Only URLs that start with `http://` or `https://` are tested. Non-HTML content such as PDFs may open in the browser's viewer, but accessibility scans will not produce meaningful results.
-- The dashboard does not surface failures or other alerts. If reports are missing or incomplete, inspect the output logs from `script/axe-auto-reporter.mjs`.
+- This project is intended for local machines or closed server environments. Authentication and authorization are not implemented, so do not deploy it on a publicly accessible server.
+- Only URLs beginning with `http://` or `https://` are processed. Non-HTML resources (e.g., PDFs) may open in the browser viewer, but meaningful accessibility results will not be produced.
+- The dashboard does not expose failure alerts. If a report is missing or incomplete, check the execution logs from `script/axe-auto-reporter.mjs`.
 
 ## Related Scripts
 
-- [burnworks/axe-auto-reporter](https://github.com/burnworks/axe-auto-reporter)
+- [burnworks/axe-auto-reporter](https://github.com/burnworks/axe-auto-reporter/tree/main)
