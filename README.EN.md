@@ -4,7 +4,9 @@ This dashboard application uses [@axe-core/puppeteer](https://github.com/dequela
 
 ![axe Auto Reporter Web](./public/img/main-logo.svg)
 
-![axe Auto Reporter Web dashboard Screen Shot](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
+![axe Auto Reporter Web Screen Shot (dashboard)](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
+
+![axe Auto Reporter Web Screen Shot (Report)](./public/img/screen-shot-axe-Auto-Reporter-Web－02.png)
 
 ## Prerequisites
 - Node.js 20.x or later
