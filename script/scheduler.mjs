@@ -143,6 +143,9 @@ const runPipeline = async () => {
 
     await runCommand(commandPaths.summary, ['--path', latestDir]);
 
+    console.log('Running npm run build to update static assets...');
+    await runCommand(process.execPath, ['node_modules/npm/bin/npm-cli.js', 'run', 'build']);
+
     const finishedAt = new Date().toISOString();
     console.log(`[${finishedAt}] 自動テスト処理が完了しました。`);
 };
