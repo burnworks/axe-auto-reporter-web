@@ -17,8 +17,22 @@ pnpm-debug.log*
 .env
 .env.production
 
+# local environment overrides
+.env.local
+.env.*.local
+
 # macOS-specific files
 .DS_Store
 
 # jetbrains setting folder
 .idea/
+
+# runtime data and generated artifacts
+data/
+public/results/
+src/pages/results/*
+!src/pages/results/\[date\]/
+!src/pages/results/\[date\]/**
+
+# local doc
+.docs/

@@ -1,0 +1,92 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "@tailwindplus/elements";
+import { REPORT_TRANSLATIONS } from "../../../shared/report-translations.js";
+
+type ReportLocale = keyof typeof REPORT_TRANSLATIONS;
+
+const ensureLocale = (value: unknown): ReportLocale => (typeof value === "string" && value in REPORT_TRANSLATIONS ? (value as ReportLocale) : "ja");
+
+const {
+  url,
+  screenshotSrc = null,
+  locale = "ja",
+  runId: rawRunId,
+  timestamp: rawTimestamp,
+} = Astro.props as {
+  url: string;
+  screenshotSrc?: string | null;
+  locale?: string;
+  runId?: string;
+  timestamp?: string | null;
+};
+
+const runId = typeof rawRunId === "string" ? rawRunId : "";
+const reportTimestamp = typeof rawTimestamp === "string" ? rawTimestamp : null;
+
+const parseRunIdDate = (value: string) => {
+  const match = value.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})$/);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  return `${year}-${month}-${day}`;
+};
+
+const formatTimestampDate = (value: string | null) => {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "";
+  }
+  return new Intl.DateTimeFormat("sv-SE", {
+    dateStyle: "short",
+    timeZone: "Asia/Tokyo",
+  }).format(parsed);
+};
+
+const resolveReportDate = (timestamp: string | null, value: string) => {
+  const fromTimestamp = formatTimestampDate(timestamp);
+  if (fromTimestamp) return fromTimestamp;
+  return parseRunIdDate(value) ?? "";
+};
+
+const reportDateLabel = resolveReportDate(reportTimestamp, runId);
+const pageTitle = `アクセシビリティレポート - ${url || "URL不明"} - ${reportDateLabel || "日付不明"}`;
+
+const translations = REPORT_TRANSLATIONS[ensureLocale(locale)];
+const screenshotAlt = translations.labelImgAlt;
+---
+
+<Layout title={pageTitle}>
+  <main class="py-10 lg:pl-72">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <hgroup class="title">
+        <h1>{translations.labelTitle}</h1>
+        <p class="testUrl">
+          <span class="urlLabel">URL:</span>
+          {url}
+        </p>
+      </hgroup>
+
+      <div class="main-contents">
+        <div class="screenshot">
+          {screenshotSrc ? <img src={screenshotSrc} alt={screenshotAlt} loading="lazy" /> : <div class="no-screenshot">Screenshot disabled for memory optimization</div>}
+        </div>
+        <div class="violation">
+          <div class="violationHeader">
+            <h2>{translations.labelViolations}</h2>
+          </div>
+          <div class="violationBody">
+            <p class="noIssues">
+              <span class="icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                </svg>
+              </span>
+              {translations.labelNoIssues}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

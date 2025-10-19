@@ -1,0 +1,335 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "@tailwindplus/elements";
+import { REPORT_TRANSLATIONS } from "../../../shared/report-translations.js";
+
+type ReportLocale = keyof typeof REPORT_TRANSLATIONS;
+
+type AxeNodeMessage = {
+  message?: string;
+};
+
+type AxeNode = {
+  impact?: string | null;
+  any?: AxeNodeMessage[];
+  none?: AxeNodeMessage[];
+  failureSummary?: string;
+  summary?: string;
+  html?: string;
+  target?: string[];
+};
+
+type AxeViolation = {
+  id?: string;
+  impact?: string | null;
+  description?: string;
+  help?: string;
+  helpUrl?: string;
+  tags?: string[];
+  nodes?: AxeNode[];
+};
+
+type AxeResult = {
+  violations?: AxeViolation[];
+};
+
+const ensureLocale = (value: unknown): ReportLocale => (typeof value === "string" && value in REPORT_TRANSLATIONS ? (value as ReportLocale) : "ja");
+
+const {
+  url,
+  result,
+  screenshotSrc = null,
+  locale = "ja",
+  runId: rawRunId,
+  timestamp: rawTimestamp,
+} = Astro.props as {
+  url: string;
+  result: AxeResult | null | undefined;
+  screenshotSrc?: string | null;
+  locale?: string;
+  runId?: string;
+  timestamp?: string | null;
+};
+
+const runId = typeof rawRunId === "string" ? rawRunId : "";
+const reportTimestamp = typeof rawTimestamp === "string" ? rawTimestamp : null;
+
+const parseRunIdDate = (value: string) => {
+  const match = value.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})$/);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  return `${year}-${month}-${day}`;
+};
+
+const formatTimestampDate = (value: string | null) => {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "";
+  }
+  return new Intl.DateTimeFormat("sv-SE", {
+    dateStyle: "short",
+    timeZone: "Asia/Tokyo",
+  }).format(parsed);
+};
+
+const resolveReportDate = (timestamp: string | null, value: string) => {
+  const fromTimestamp = formatTimestampDate(timestamp);
+  if (fromTimestamp) return fromTimestamp;
+  return parseRunIdDate(value) ?? "";
+};
+
+const reportDateLabel = resolveReportDate(reportTimestamp, runId);
+const pageTitle = `アクセシビリティレポート - ${url || "URL不明"} - ${reportDateLabel || "日付不明"}`;
+
+const translations = REPORT_TRANSLATIONS[ensureLocale(locale)];
+const violations: AxeViolation[] = Array.isArray(result?.violations) ? (result.violations as AxeViolation[]) : [];
+const toNodeArray = (value: unknown): AxeNode[] => (Array.isArray(value) ? (value as AxeNode[]) : []);
+const toMessageArray = (value: unknown): AxeNodeMessage[] => (Array.isArray(value) ? (value as AxeNodeMessage[]) : []);
+const toStringArray = (value: unknown): string[] => (Array.isArray(value) ? (value as string[]) : []);
+
+const impactOrder = ["critical", "serious", "moderate", "minor"];
+const impactCounts = impactOrder.reduce<Record<string, number>>((acc, impact) => {
+  acc[impact] = 0;
+  return acc;
+}, {});
+
+for (const violation of violations) {
+  for (const node of toNodeArray(violation?.nodes)) {
+    const impact = node?.impact ?? violation?.impact;
+    if (impact && Object.prototype.hasOwnProperty.call(impactCounts, impact)) {
+      impactCounts[impact]++;
+    }
+  }
+}
+
+const translateImpact = (impact: string) => translations.impactData?.[impact as keyof typeof translations.impactData] ?? impact ?? "";
+const screenshotAlt = translations.labelImgAlt;
+const hasFilters = impactOrder.some((impact) => typeof impactCounts[impact] === "number");
+---
+
+<Layout title={pageTitle}>
+  <main class="py-10 lg:pl-72">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <hgroup class="title">
+        <h1>{translations.labelTitle} （{reportDateLabel || "日付不明"}）</h1>
+        <p class="testUrl">
+          <span class="urlLabel">URL:</span>
+          {url}
+        </p>
+      </hgroup>
+
+      <div class="main-contents">
+        <div class="screenshot">
+          {screenshotSrc ? <img src={screenshotSrc} alt={screenshotAlt} loading="lazy" /> : <div class="no-screenshot">Screenshot disabled for memory optimization</div>}
+        </div>
+
+        <div class="violation">
+          <div class="violationHeader">
+            <h2>{translations.labelViolations}</h2>
+          </div>
+
+          {
+            hasFilters ? (
+              <div class="violationSummary">
+                <dl class="violationFilter">
+                  <dt>
+                    {translations.labelViolationFilter}
+                    <span class="sr-only">{translations.labelViolationFilterNote}</span>
+                  </dt>
+                  <dd>
+                    <ul>
+                      {impactOrder.map((impact) => (
+                        <li>
+                          <span class="sr-only">
+                            <input type="checkbox" name={`filter-${impact}`} id={`filter-${impact}`} checked />
+                          </span>
+                          <label class="violationFilterBtn" for={`filter-${impact}`}>
+                            <span class={`violationLabel ${impact}`}>{translateImpact(impact)}</span>
+                            <span class="violationFilterNum">{impactCounts[impact]}</span>
+                          </label>
+                        </li>
+                      ))}
+                      <li class="violationFilterReset">
+                        <button class="violationFilterResetBtn" id="filter-reset" aria-label={translations.labelViolationFilterResetAriaLabel}>
+                          {translations.labelViolationFilterReset}
+                        </button>
+                      </li>
+                    </ul>
+                  </dd>
+                </dl>
+
+                <div class="violationResult">
+                  {violations.map((violation: AxeViolation) => {
+                    const ruleTags = Array.isArray(violation?.tags) ? violation.tags : [];
+                    const nodes = toNodeArray(violation?.nodes);
+                    const fallbackImpact = violation?.impact ?? "unknown";
+
+                    return (
+                      <div class="violationBody">
+                        <div class="violationBodyHeader">
+                          <h3>{violation?.description ?? ""}</h3>
+                          <div class="helpUrl">
+                            <dl>
+                              <dt>{translations.labelHelpPage}</dt>
+                              <dd>
+                                <a href={violation?.helpUrl ?? ""} target="_blank" rel="noopener noreferrer">
+                                  {violation?.help ?? ""}
+                                </a>
+                              </dd>
+                            </dl>
+                          </div>
+                          {ruleTags.length > 0 ? (
+                            <div class="tagList">
+                              <ul>
+                                {ruleTags.map((tag) => (
+                                  <li>
+                                    <span>{tag}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ) : null}
+                        </div>
+                        <div class="violationItem">
+                          <ul>
+                            {nodes.map((node: AxeNode) => {
+                              const nodeImpact = node?.impact ?? fallbackImpact;
+                              const anyMessages = toMessageArray(node?.any);
+                              const noneMessages = toMessageArray(node?.none);
+                              const failureSummary = node?.failureSummary;
+                              const targetHtml = node?.html;
+                              const targetDom = toStringArray(node?.target)[0] ?? null;
+
+                              return (
+                                <li data-impact={nodeImpact}>
+                                  <dl>
+                                    <div class="failureMessage">
+                                      <dt>
+                                        {translations.labelFailureMessage}
+                                        <span class="impact">
+                                          {translations.labelImpact} <span class={`impactLabel ${nodeImpact}`}>{translateImpact(nodeImpact)}</span>
+                                        </span>
+                                      </dt>
+                                      <dd class="failureList">
+                                        <ul>
+                                          {anyMessages.map((message: AxeNodeMessage) => (
+                                            <li>
+                                              <span class="failureListIcon" aria-hidden="true">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                                                </svg>
+                                              </span>
+                                              {message?.message ?? ""}
+                                            </li>
+                                          ))}
+                                          {noneMessages.map((message: AxeNodeMessage) => (
+                                            <li>
+                                              <span class="failureListIcon" aria-hidden="true">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                                                </svg>
+                                              </span>
+                                              {message?.message ?? ""}
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </dd>
+                                    </div>
+
+                                    {failureSummary ? (
+                                      <div class="failureSummary">
+                                        <dt>{translations.labelFailureSummary}</dt>
+                                        <dd>{failureSummary}</dd>
+                                      </div>
+                                    ) : null}
+
+                                    {targetHtml ? (
+                                      <div class="targetHTML">
+                                        <dt>{translations.labelTargetHTML}</dt>
+                                        <dd>
+                                          <code tabindex="0">{targetHtml}</code>
+                                        </dd>
+                                      </div>
+                                    ) : null}
+
+                                    {targetDom ? (
+                                      <div class="targetDom">
+                                        <dt>DOM</dt>
+                                        <dd>
+                                          <code tabindex="0">{targetDom}</code>
+                                        </dd>
+                                      </div>
+                                    ) : null}
+                                  </dl>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div class="violationSummary">
+                <p class="noIssues">
+                  <span class="icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </span>
+                  {translations.labelNoIssues}
+                </p>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script is:inline>
+    (function () {
+      const checkboxes = document.querySelectorAll('.violationFilter input[type="checkbox"]');
+      const resetButton = document.getElementById("filter-reset");
+      const violationItems = document.querySelectorAll(".violationItem li");
+
+      if (!checkboxes.length || !violationItems.length) {
+        return;
+      }
+
+      const updateVisibility = () => {
+        const active = Array.from(checkboxes)
+          .filter((checkbox) => checkbox.checked)
+          .map((checkbox) => checkbox.id.replace("filter-", ""));
+
+        violationItems.forEach((item) => {
+          const impact = item.getAttribute("data-impact");
+          if (!impact || active.includes(impact)) {
+            item.removeAttribute("hidden");
+          } else {
+            item.setAttribute("hidden", "true");
+          }
+        });
+      };
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", updateVisibility);
+      });
+
+      if (resetButton) {
+        resetButton.addEventListener("click", (event) => {
+          event.preventDefault();
+          checkboxes.forEach((checkbox) => {
+            checkbox.checked = true;
+          });
+          updateVisibility();
+        });
+      }
+
+      updateVisibility();
+    })();
+  </script>
+</Layout>

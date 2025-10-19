@@ -1,0 +1,94 @@
+---
+import Logo from "./Logo.astro";
+
+const closeCommandAttributes = { command: "close", commandfor: "sidebar" } as Record<string, string>;
+const currentPath = Astro.url.pathname;
+const dashboardHref = "/";
+const settingHref = "/setting";
+const isDashboardCurrent = currentPath === dashboardHref;
+const isSettingCurrent = currentPath.startsWith(settingHref);
+const navLinkBaseClass = "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold";
+const navLinkCurrentClass = "bg-gray-50 dark:bg-white/5 text-red-800 dark:text-white";
+const navLinkDefaultClass = "text-gray-700 dark:text-gray-400 hover:text-red-800 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5";
+const navIconBaseClass = "size-6 shrink-0";
+const navIconCurrentClass = "text-red-800 dark:text-white";
+const navIconDefaultClass = "text-gray-400 group-hover:text-red-800 dark:group-hover:text-white";
+---
+
+<el-dialog>
+    <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
+        <el-dialog-backdrop class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"></el-dialog-backdrop>
+
+        <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
+            <el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
+                <div class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
+                    <button type="button" {...closeCommandAttributes} class="-m-2.5 p-2.5">
+                        <span class="sr-only">メニューを閉じる</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 text-white">
+                            <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div
+                    class="relative flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2 dark:bg-gray-900 dark:ring dark:ring-white/10 dark:before:pointer-events-none dark:before:absolute dark:before:inset-0 dark:before:bg-black/10"
+                >
+                    <div class="relative flex h-16 shrink-0 items-center">
+                        <div class="text-gray-800 dark:text-white">
+                            <Logo />
+                        </div>
+                    </div>
+                    <nav class="relative flex flex-1 flex-col">
+                        <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                            <li>
+                                <ul role="list" class="-mx-2 space-y-1">
+                                    <li>
+                                        <a href={dashboardHref} class={`${navLinkBaseClass} ${isDashboardCurrent ? navLinkCurrentClass : navLinkDefaultClass}`}>
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                data-slot="icon"
+                                                aria-hidden="true"
+                                                class={`${navIconBaseClass} ${isDashboardCurrent ? navIconCurrentClass : navIconDefaultClass}`}
+                                            >
+                                                <path
+                                                    d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"></path>
+                                            </svg>
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href={settingHref} class={`${navLinkBaseClass} ${isSettingCurrent ? navLinkCurrentClass : navLinkDefaultClass}`}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.5"
+                                                stroke="currentColor"
+                                                data-slot="icon"
+                                                aria-hidden="true"
+                                                class={`${navIconBaseClass} ${isSettingCurrent ? navIconCurrentClass : navIconDefaultClass}`}
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z"
+                                                ></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+                                            </svg>
+                                            Setting
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </el-dialog-panel>
+        </div>
+    </dialog>
+</el-dialog>

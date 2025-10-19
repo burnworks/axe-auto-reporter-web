@@ -1,0 +1,426 @@
+@import "tailwindcss";
+
+@theme {
+    --font-body: "Noto Sans JP Variable", sans-serif;
+    --font-en: Roboto, sans-serif;
+    --font-pre: "Source Code Pro Variable", monospace;
+}
+
+@layer components {
+    .title {
+        @apply space-y-2 text-gray-900 dark:text-white;
+
+        h1 {
+            @apply text-xl font-semibold;
+        }
+    }
+
+    .testUrl {
+        @apply flex items-center gap-2 text-sm truncate;
+    }
+
+    .main-contents {
+        @apply grid grid-cols-1 gap-6 py-12 md:grid-cols-8;
+    }
+
+    .screenshot {
+        @apply md:order-last md:col-span-2;
+    }
+
+    .screenshot img {
+        @apply rounded-md;
+    }
+
+    .violation {
+        @apply md:col-span-6;
+    }
+
+    .violationHeader {
+        @apply text-2xl font-bold text-gray-900 lg:text-4xl sm:text-3xl dark:text-gray-200;
+    }
+
+    .violationSummary {
+        @apply mt-10;
+    }
+
+    .violationFilter {
+        @apply flex flex-col gap-4 lg:flex-row lg:items-center;
+    }
+
+    .violationFilter dt {
+        @apply font-bold shrink-0 dark:text-gray-200;
+    }
+
+    .violationFilter ul {
+        @apply flex gap-4 items-center flex-wrap;
+    }
+
+    .violationFilterBtn {
+        @apply flex items-center overflow-hidden rounded-md border border-gray-700 hover:cursor-pointer dark:border-white/10 dark:bg-white/10;
+    }
+
+    .violationFilter li:focus-within .violationFilterBtn {
+        @apply outline-2 outline-offset-2 outline-blue-700;
+    }
+
+    .violationFilterBtn.disabled {
+        @apply text-gray-600 bg-gray-200;
+    }
+
+    .violationFilterBtn.disabled .violationLabel {
+        @apply text-gray-600 bg-gray-200;
+    }
+
+    .violationFilterBtn.disabled .violationFilterNum {
+        @apply font-normal;
+    }
+
+    .violationLabel {
+        @apply py-1 px-4 text-white;
+    }
+
+    .violationLabel.minor {
+        @apply bg-sky-800;
+    }
+
+    .violationLabel.moderate {
+        @apply bg-purple-800;
+    }
+
+    .violationLabel.serious {
+        @apply bg-red-700;
+    }
+
+    .violationLabel.critical {
+        @apply bg-red-900;
+    }
+
+    .violationFilterNum {
+        @apply py-1 px-4 font-bold dark:text-gray-200;
+    }
+
+    .violationFilterReset {
+        @apply w-full xl:w-fit xl:ml-6;
+    }
+
+    .violationFilterResetBtn {
+        @apply inline-block py-1 px-2 overflow-hidden rounded-md border border-gray-400 bg-gray-200 text-sm hover:bg-gray-300 focus:outline-offset-2 dark:text-gray-300 dark:border-white/20 dark:bg-white/10 hover:dark:bg-white/5;
+    }
+
+    .violationBody {
+        @apply mt-10 rounded-md border border-gray-200 dark:border-white/20;
+    }
+
+    .violationBody+.violationBody {
+        @apply mt-12;
+    }
+
+    .violationBody h3 {
+        @apply text-lg font-bold text-gray-900 lg:text-2xl sm:text-xl dark:text-gray-200;
+    }
+
+    .violationBodyHeader {
+        @apply p-6 border-b border-gray-200 bg-amber-50 dark:border-white/20 dark:bg-white/10;
+    }
+
+    .helpUrl {
+        @apply mt-4 pl-8;
+    }
+
+    .helpUrl dl {
+        @apply flex items-center text-sm;
+    }
+
+    .helpUrl dt {
+        @apply shrink-0 px-4 py-1 rounded-xs border border-gray-200 bg-white dark:border-white/20 dark:bg-gray-800 dark:text-gray-200;
+    }
+
+    .helpUrl dd {
+        @apply px-4 py-1;
+    }
+
+    .helpUrl dd a {
+        @apply underline dark:text-gray-300;
+
+        &:hover {
+            @apply text-red-800 dark:text-red-500;
+        }
+    }
+
+    .tagList {
+        @apply mt-4 pl-8;
+    }
+
+    .tagList ul {
+        @apply flex gap-4 flex-wrap;
+    }
+
+    .tagList li span {
+        @apply inline-block py-1 px-4 rounded-md bg-sky-700 border border-sky-900 text-white text-sm dark:bg-sky-900;
+    }
+
+    .violationItem {
+        @apply px-6 dark:bg-white/5 dark:text-gray-200;
+    }
+
+    .violationItem>ul {
+        @apply divide-y divide-gray-200 dark:divide-white/20;
+    }
+
+    .violationItem>ul>li {
+        @apply py-12;
+    }
+
+    .violationItem dl {
+        @apply space-y-6;
+    }
+
+    .violationItem dl>div {
+        @apply space-y-2;
+    }
+
+    .failureMessage dt {
+        @apply mb-4;
+    }
+
+    .failureMessage dd {
+        @apply text-base font-bold text-gray-900 sm:text-lg;
+    }
+
+    .failureList li {
+        @apply flex dark:text-gray-200;
+    }
+
+    .failureListIcon {
+        @apply shrink-0 mr-2 text-red-700 h-7 flex items-center;
+    }
+
+    .failureListIcon svg {
+        @apply w-6 h-6;
+    }
+
+    .impact {
+        @apply ml-4 inline-block pl-4 rounded-xs bg-gray-100 border border-gray-200 text-sm dark:bg-white/5;
+    }
+
+    .impactLabel {
+        @apply inline-block ml-4 py-1 px-4 bg-white border-l border-gray-200 font-bold;
+    }
+
+    .impactLabel.minor {
+        @apply text-sky-800 dark:text-white dark:bg-sky-800;
+    }
+
+    .impactLabel.moderate {
+        @apply text-purple-800 dark:text-white dark:bg-purple-800;
+    }
+
+    .impactLabel.serious {
+        @apply text-red-700 dark:text-white dark:bg-red-700;
+    }
+
+    .impactLabel.critical {
+        @apply text-red-900 dark:text-white dark:bg-red-900;
+    }
+
+    .failureSummary,
+    .targetHTML,
+    .targetDom {
+        @apply pl-8;
+    }
+
+    .failureSummary dt,
+    .targetHTML dt,
+    .targetDom dt {
+        @apply font-bold;
+    }
+
+    .targetHTML code,
+    .targetDom code {
+        @apply block bg-gray-800 text-white rounded-md border-gray-900 font-mono py-2 px-4 whitespace-nowrap overflow-auto text-sm;
+    }
+
+    .noIssues {
+        @apply p-6 flex items-center text-lg font-bold text-green-800 lg:text-2xl sm:text-xl dark:text-green-400 dark:bg-white/5;
+    }
+
+    .noIssues .icon {
+        @apply shrink-0 mr-4;
+    }
+
+    .noIssues .icon svg {
+        @apply w-6 h-6 lg:w-10 lg:h-10;
+    }
+
+    /* Summary Page */
+
+    .summary-table {
+        @apply py-12;
+
+        .results-section-header {
+            @apply font-bold text-lg mb-4 dark:text-gray-100;
+        }
+
+        .overflow-table {
+            @apply overflow-x-auto scroll-smooth;
+        }
+
+        table {
+            @apply min-w-full divide-y divide-gray-300 dark:divide-gray-600;
+        }
+
+        thead  {
+            @apply bg-gray-50 dark:bg-black/10;
+
+            th {
+                @apply px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-gray-200;
+
+                &.sortable {
+                    @apply text-center;
+                }
+            }
+        }
+
+        tbody {
+            @apply divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-white/5;
+
+            th {
+                @apply px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-gray-200;
+            }
+            td {
+                @apply px-3 py-4 whitespace-nowrap;
+            }
+        }
+
+        .report-link {
+            @apply flex items-center gap-2;
+
+            a {
+                @apply text-gray-900 dark:text-gray-200;
+
+                &:hover {
+                    @apply text-red-800 dark:text-red-500;
+                }
+            }
+        }
+
+        .report-link-ex {
+            @apply inline-flex p-2 text-gray-600 dark:text-gray-200;
+        }
+
+        .report-link-ex-icon {
+            @apply size-4;
+        }
+
+        .violation-count-summary {
+            @apply flex items-center gap-4;
+        }
+
+        .sort-icon {
+                @apply inline-block ml-2 text-gray-600 hover:cursor-pointer dark:text-gray-300;
+
+            svg {
+                @apply size-4;
+            }
+        }
+        
+        .impact-cell,
+        .total-cell {
+            @apply text-center font-bold;
+        }
+        
+        .impact-cell.minor {
+            @apply text-sky-800 dark:text-sky-400;
+        }
+        .impact-cell.moderate {
+            @apply text-purple-800 dark:text-purple-400;
+        }
+        .impact-cell.serious {
+            @apply text-red-700 dark:text-red-600;
+        }
+        .impact-cell.critical {
+            @apply text-red-900 dark:text-red-500;
+        }
+        .total-cell {
+            @apply text-gray-700 dark:text-gray-300;
+        }
+
+    }
+
+    .stats-summary {
+        @apply py-12;
+
+        .stats-summary-header {
+            @apply font-bold text-lg mb-2 dark:text-gray-100;
+
+            span {
+                @apply font-normal text-sm inline-block ml-2;
+            }
+        }
+        
+        .stats-cards {
+            @apply grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-5;
+        }
+            
+        .stat-card {
+            @apply text-center rounded-md bg-gray-50 p-4 dark:bg-black/10 dark:text-gray-100;
+        }
+        
+        .stat-card h3 {
+            @apply font-bold text-lg;
+        }
+        
+        .stat-number {
+            @apply font-bold text-5xl my-4;
+
+            span {
+                @apply inline-block ml-2 text-xl;
+            }
+        }
+        
+        .stat-card.critical {
+            @apply border border-red-900 dark:border-red-500;
+
+            .stat-number {
+                @apply text-red-900 dark:text-red-500;
+            }
+        }
+        
+        .stat-card.serious {
+            @apply border border-red-700 dark:border-red-600;
+
+            .stat-number {
+                @apply text-red-700 dark:text-red-600;
+            }
+        }
+        
+        .stat-card.moderate {
+            @apply border border-purple-800 dark:border-purple-400;
+            .stat-number {
+                @apply text-purple-800 dark:text-purple-400;
+            }
+        }
+        
+        .stat-card.minor {
+            @apply border border-sky-800 dark:border-sky-400;
+
+            .stat-number {
+                @apply text-sky-800 dark:text-sky-400;
+            }
+        }
+        
+        .stat-card.any {
+            @apply border border-gray-700 dark:border-gray-300;
+
+            .stat-number {
+                @apply text-gray-700 dark:text-gray-300;
+            }
+        }
+        
+        .stat-label {
+            @apply text-base;
+        }
+            
+    }
+
+}

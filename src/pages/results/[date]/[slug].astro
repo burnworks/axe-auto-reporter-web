@@ -1,0 +1,72 @@
+---
+export const prerender = false;
+
+import ResultTemplate from "../../template/result_template.astro";
+import ResultTemplateNoIssues from "../../template/result_template_noissues.astro";
+import { readFile, access } from "node:fs/promises";
+import path from "node:path";
+
+const runId = typeof Astro.params.date === "string" ? Astro.params.date : "";
+const slug = typeof Astro.params.slug === "string" ? Astro.params.slug : "";
+
+const runIdPattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}$/;
+const slugPattern = /^[a-z0-9-]+$/;
+
+if (!runIdPattern.test(runId) || !slugPattern.test(slug)) {
+  return new Response(null, { status: 404 });
+}
+
+const resultsRoot = path.resolve(process.cwd(), "src", "pages", "results");
+const jsonPath = path.join(resultsRoot, runId, "_json", `${slug}.json`);
+
+let raw = "";
+try {
+  raw = await readFile(jsonPath, "utf-8");
+} catch {
+  return new Response(null, { status: 404 });
+}
+
+let result;
+try {
+  result = JSON.parse(raw);
+} catch {
+  return new Response(null, { status: 500 });
+}
+
+const resolveLegacyScreenshotPath = async (run: string, base: string): Promise<string | null> => {
+  const candidates = ["webp", "png", "jpg", "jpeg"];
+  for (const ext of candidates) {
+    const relativeWebPath = `/results/${run}/images/${base}.${ext}`;
+    const absolutePath = path.resolve(process.cwd(), "public", "results", run, "images", `${base}.${ext}`);
+    try {
+      await access(absolutePath);
+      return relativeWebPath;
+    } catch {
+      // continue
+    }
+  }
+  return null;
+};
+
+const url = typeof result?.url === "string" ? result.url : "";
+const baseFilename = typeof result?.metadata?.baseFilename === "string" ? result.metadata.baseFilename : slug;
+const locale = typeof result?.metadata?.locale === "string" ? result.metadata.locale : "ja";
+
+let screenshotSrc = typeof result?.metadata?.screenshotPath === "string" ? result.metadata.screenshotPath : null;
+if (!screenshotSrc) {
+  screenshotSrc = await resolveLegacyScreenshotPath(runId, baseFilename);
+}
+
+const hasViolations = Array.isArray(result?.violations) && result.violations.length > 0;
+const TemplateComponent = hasViolations ? ResultTemplate : ResultTemplateNoIssues;
+const reportTimestamp = typeof result?.timestamp === "string" ? result.timestamp : null;
+---
+
+<TemplateComponent
+  url={url}
+  result={result}
+  screenshotSrc={screenshotSrc}
+  locale={locale}
+  runId={runId}
+  timestamp={reportTimestamp}
+/>
