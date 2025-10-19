@@ -16,7 +16,7 @@
 > Linux 環境で Docker を使わずに実行する場合、Puppeteer が要求する Chromium 系ライブラリが不足してエラーになることがあります。動作に必要なパッケージはプロジェクトの `Dockerfile` を参照し、事前にインストールしておいてください。
 
 ## インストール
-リポジトリを `clone` 後、ルートディレクトリで以下のコマンドを実行します。
+リポジトリを `clone` した後、ルートディレクトリに移動して `npm install` を実行します。
 
 ```sh
 git clone https://github.com/burnworks/axe-auto-reporter-web.git
@@ -40,12 +40,30 @@ npm run preview -- --host 0.0.0.0 --port 3000
 設定画面（Setting）を開いてサイトマップの URL など必要な項目を入力して保存します。（設定を保存すると `data/settings.json` と `data/url-list.txt` が更新されます）
 
 ### 3. 初回テストの実行
-別のターミナルで `node script/scheduler.mjs --once` を実行し、初回アクセシビリティテストを実行します（CUI 画面に進捗が表示されますのでテストが終わるまでお待ちください）。
+別のターミナルで以下のコマンドを実行し、初回アクセシビリティテストを実行します（CUI 画面に進捗が表示されますのでテストが終わるまでお待ちください）。
+
+```sh
+node script/scheduler.mjs --once
+```
 
 ### 4. 運用開始
 初回テストが完了したらブラウザ画面に戻って再読み込みし、アクセシビリティレポートがダッシュボードに表示されているかを確認します。
 
-初回レポートが生成された後は、`node script/scheduler.mjs` を（`--once` なしで）常駐させておくと、設定画面で選択した「テスト頻度」設定に従って以降のレポートが自動で作成されます。
+
+### 5. テストスケジュールの設定
+初回レポートが生成された後は、以下のように `node script/scheduler.mjs` を（`--once` なしで）別のターミナルで実行し、常駐させておくと、設定画面で選択した「テスト頻度」設定に従って以降のレポートが自動で作成されます。
+
+```sh
+node script/scheduler.mjs
+```
+
+あるいは、Windows のタスクスケジューラ、Mac の launchd などで、以下のコマンドを任意の間隔で自動実行することで代用もできます（この場合、設定画面の「テスト頻度」設定は使用されません）。
+
+```sh
+node script/scheduler.mjs --once
+```
+
+もし、スケジュール設定が難しい場合は、任意のタイミングで `node script/scheduler.mjs --once` を実行しても構いません。
 
 スケジューラは毎回実行前に `data/settings.json` を読み込み、sitemap.xml の URL、タグ、クロールモード、対象ページ数（上限）、テスト頻度（`daily` / `weekly` / `monthly`）を参照します。生成されたレポートは `src/pages/results/` に保存され、`data/reports/index.json` にインデックスされます。
 
