@@ -43,11 +43,12 @@ const runCommand = (commandPath, args = []) =>
 
 const runNpmCommand = (args = []) =>
     new Promise((resolve, reject) => {
-        const npmExecutable = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-        const child = spawn(npmExecutable, args, {
+        const useShell = process.platform === 'win32';
+        const child = spawn('npm', args, {
             stdio: 'inherit',
             cwd: ROOT_DIR,
-            env: process.env
+            env: process.env,
+            shell: useShell
         });
 
         child.on('close', (code) => {
