@@ -16,9 +16,11 @@
 > Linux 環境で Docker を使わずに実行する場合、Puppeteer が要求する Chromium 系ライブラリが不足してエラーになることがあります。動作に必要なパッケージはプロジェクトの `Dockerfile` を参照し、事前にインストールしておいてください。
 
 ## インストール
-リポジトリのルートで以下のコマンドを実行します。
+リポジトリを `clone` 後、ルートディレクトリで以下のコマンドを実行します。
 
 ```sh
+git clone https://github.com/burnworks/axe-auto-reporter-web.git
+cd axe-auto-reporter-web
 npm install
 ```
 
