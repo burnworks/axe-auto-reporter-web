@@ -9,6 +9,9 @@
     "type": "git",
     "url": "https://github.com/burnworks/axe-auto-reporter-web"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "keywords": [
     "accessibility",
     "a11y",
@@ -23,6 +26,7 @@
   },
   "dependencies": {
     "@astrojs/node": "^9.5.0",
+    "@axe-core/puppeteer": "^4.10.2",
     "@fontsource-variable/noto-sans-jp": "^5.2.9",
     "@fontsource-variable/roboto": "^5.2.8",
     "@fontsource-variable/source-code-pro": "^5.2.7",
@@ -30,9 +34,9 @@
     "@tailwindplus/elements": "^1.0.18",
     "astro": "^5.14.6",
     "fast-xml-parser": "^5.3.0",
-    "puppeteer": "^24.25.0",
-    "@axe-core/puppeteer": "^4.10.2",
+    "minimist": "^1.2.8",
     "node-cron": "^4.2.1",
+    "puppeteer": "^24.25.0",
     "tailwindcss": "^4.1.14"
   }
 }
