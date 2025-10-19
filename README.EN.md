@@ -1,8 +1,8 @@
 # axe Auto Reporter Web
 
-![axe Auto Reporter Web](./public/img/main-logo.svg)
-
 This dashboard application uses [@axe-core/puppeteer](https://github.com/dequelabs/axe-core-npm/blob/develop/packages/puppeteer/README.md) to automatically run accessibility tests for the URLs listed in a supplied `sitemap.xml`, then presents the results as reports.
+
+![axe Auto Reporter Web](./public/img/main-logo.svg)
 
 ![axe Auto Reporter Web dashboard Screen Shot](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
 
