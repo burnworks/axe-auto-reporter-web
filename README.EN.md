@@ -16,17 +16,26 @@ From the repository root, run:
 npm install
 ```
 
+## First Launch and Initial Setup
+
+### 1. First Launch
+Execute the commands below in a terminal, then open `http://localhost:3000` in your browser.  
+
+```sh
+npm run build
+npm run preview -- --host 0.0.0.0 --port 3000
+```
+
 The initial launch creates the necessary seed files under `data/`.
 
-## First Launch and Initial Setup
-1. Execute the commands below in a terminal, then open `http://localhost:3000` in your browser.  
-    ```sh
-    npm run build
-    npm run preview -- --host 0.0.0.0 --port 3000
-    ```
-2. Open the Settings screen, enter the sitemap URL and other required fields, then save. The values are written to `data/settings.json` and `data/url-list.txt`.
-3. In another terminal, run `node script/scheduler.mjs --once` to execute the accessibility pipeline with the saved settings (progress appears in the terminal; wait until it finishes).
-4. Return to the browser and refresh the page to make sure the initial report cards are rendered on the dashboard.
+### 2. Setting
+Open the Settings screen, enter the sitemap URL and other required fields, then save. The values are written to `data/settings.json` and `data/url-list.txt`.
+
+### 3. Run test
+In another terminal, run `node script/scheduler.mjs --once` to execute the accessibility pipeline with the saved settings (progress appears in the terminal; wait until it finishes).
+
+### 4. Start
+Return to the browser and refresh the page to make sure the initial report cards are rendered on the dashboard.
 
 After the first report has been generated, you can keep `node script/scheduler.mjs` running (without `--once`) so the cron schedule defined in the script continues producing future reports automatically.
 
