@@ -1,8 +1,8 @@
 # axe Auto Reporter Web
 
-![axe Auto Reporter Web](./public/img/main-logo.svg)
-
 [@axe-core/puppeteer](https://github.com/dequelabs/axe-core-npm/blob/develop/packages/puppeteer/README.md) を使用して、指定した `sitemap.xml` 内の URL に対してアクセシビリティテストを自動的に実行、その結果をレポートとして表示するダッシュボードアプリです。
+
+![axe Auto Reporter Web](./public/img/main-logo.svg)
 
 ![axe Auto Reporter Web ダッシュボード スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web.png)
 
