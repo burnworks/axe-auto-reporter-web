@@ -52,14 +52,14 @@ Return to the browser and refresh the page to confirm that the first report card
 ### 5. Test scheduling
 After the initial report has been generated you have two options:
 
-1)   
+(1)   
 Keep the scheduler running in another terminal so it follows the frequency selected on the Settings screen.
 
 ```sh
 node script/scheduler.mjs
 ```
 
-2)   
+(2)   
 Or, schedule the following command with Windows Task Scheduler, macOS launchd, or a similar tool. In this mode the in-app “test frequency” is ignored; configure the interval on the OS side instead.
 
 ```sh
