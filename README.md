@@ -67,6 +67,31 @@ node script/scheduler.mjs --once
 
 スケジューラは毎回実行前に `data/settings.json` を読み込み、sitemap.xml の URL、タグ、クロールモード、対象ページ数（上限）、テスト頻度（`daily` / `weekly` / `monthly`）を参照します。生成されたレポートは `src/pages/results/` に保存され、`data/reports/index.json` にインデックスされます。
 
+## ヒント
+Node.js が導入済みの Linux サーバで稼働させる場合、PM2 等を使用して、以下の2つのプロセスを常駐させてください（別途、ウェブサーバ等の設定は必要です）。
+
+```sh
+# インストール
+git clone https://github.com/burnworks/axe-auto-reporter-web.git
+cd axe-auto-reporter-web
+cp .env.sample .env  # 認証情報を設定
+npm install
+npm run build
+
+# PM2 の導入
+npm install -g pm2
+
+# ダッシュボード本体の立ち上げ 
+pm2 start dist/server/entry.mjs --name axe-dashboard --interpreter node
+
+# スケジューラの立ち上げ 
+pm2 start script/scheduler.mjs --name axe-scheduler --interpreter node
+
+# 任意で PM2 の自動起動設定など
+pm2 startup
+pm2 save
+```
+
 ## ユーザー認証（オプション）
 以下の設定を行うと、ユーザー認証機能を有効にできます。
 
