@@ -73,6 +73,12 @@ node script/scheduler.mjs --once
 - テストの対象は `http://` または `https://` で始まる URL のみです。PDF など非 HTML コンテンツはブラウザ内ビューアでアクセスできてしまいますが、アクセシビリティ試験自体は正常に実行されません。
 - テストの失敗などに対するダッシュボード上での通知・表示などは行われません。レポートが正常に生成されない場合などは `script/axe-auto-reporter.mjs` の実行ログを確認してください。
 
+## 今後の予定（時期未定）
+
+- ユーザー認証機能を追加して公開サーバでも運用できるようにしたい
+- 現状、設定データなど保存に RDB を使用していないが、ユーザー認証機能追加時に各データを RDB に保存するようにしたい
+- Docker で簡単に立ち上げられるようにしたい
+
 ## 関連スクリプト
 
 - [burnworks/axe-auto-reporter](https://github.com/burnworks/axe-auto-reporter)
