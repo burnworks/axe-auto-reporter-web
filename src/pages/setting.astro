@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Dialog from "../components/Dialog.astro";
+import Sidebar from "../components/Sidebar.astro";
+
 import "@tailwindplus/elements";
 import { readSettings } from "../server/settings";
 import { ALLOWED_TAGS, MAX_PAGE_LIMIT } from "../../shared/default-settings.js";
@@ -28,6 +31,9 @@ const frequencyOptions = [
 ---
 
 <Layout title={title}>
+    <Dialog />
+    <Sidebar />
+
     <main class="py-10 lg:pl-72">
         <div class="px-4 sm:px-6 lg:px-8">
             <div class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">

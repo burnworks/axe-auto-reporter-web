@@ -4,9 +4,6 @@ import "@fontsource-variable/noto-sans-jp";
 import "@fontsource-variable/source-code-pro";
 import "@fontsource-variable/roboto";
 
-import Dialog from "../components/Dialog.astro";
-import Sidebar from "../components/Sidebar.astro";
-
 interface Props {
 	title?: string;
 }
@@ -27,8 +24,6 @@ const siteSubtitle: string = "Automated Accessibility Testing Dashboard";
 		<link rel="apple-touch-icon" type="image/png" href="/img/favicon/apple-touch-icon-180x180.png" />
 	</head>
 	<body class="h-full font-body">
-		<Dialog />
-		<Sidebar />
 		<slot />
 	</body>
 </html>

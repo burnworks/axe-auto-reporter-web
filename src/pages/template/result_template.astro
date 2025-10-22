@@ -1,5 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Dialog from "../../components/Dialog.astro";
+import Sidebar from "../../components/Sidebar.astro";
+
 import "@tailwindplus/elements";
 import { REPORT_TRANSLATIONS } from "../../../shared/report-translations.js";
 
@@ -109,6 +112,8 @@ const hasFilters = impactOrder.some((impact) => typeof impactCounts[impact] === 
 ---
 
 <Layout title={pageTitle}>
+  <Dialog />
+  <Sidebar />
   <main class="py-10 lg:pl-72">
     <div class="px-4 sm:px-6 lg:px-8">
       <hgroup class="title">
