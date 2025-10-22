@@ -69,6 +69,31 @@ If setting up a scheduler is cumbersome, simply run `node script/scheduler.mjs -
 
 Before every run the scheduler reloads `data/settings.json`, retrieves the sitemap URL, tags, crawl mode, maximum pages, and frequency (`daily`, `weekly`, or `monthly`), generates reports under `src/pages/results/`, and updates the index stored in `data/reports/index.json`.
 
+## Tips
+When running on a Linux server with Node.js installed, keep the following two processes alive with PM2 (or a similar process manager). You still need to configure your web server separately.
+
+```sh
+# Install
+git clone https://github.com/burnworks/axe-auto-reporter-web.git
+cd axe-auto-reporter-web
+cp .env.sample .env  # Edit this file with your own credentials
+npm install
+npm run build
+
+# Install PM2
+npm install -g pm2
+
+# Start the dashboard
+pm2 start dist/server/entry.mjs --name axe-dashboard --interpreter node
+
+# Start the scheduler
+pm2 start script/scheduler.mjs --name axe-scheduler --interpreter node
+
+# Optional: configure PM2 to restart on boot
+pm2 startup
+pm2 save
+```
+
 ## User Authentication (Optional)
 Follow the steps below if you want to enable user authentication.
 
