@@ -1,12 +1,21 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Logo from "../components/Logo.astro";
+import { isAuthenticationEnabled } from "../server/auth";
 
-const title: string = "ログイン画面";
+const title: string = "ログインページ";
+const url = new URL(Astro.request.url);
+const redirectTarget = url.searchParams.get("redirect") ?? "/";
+const hasError = url.searchParams.get("error") === "invalid";
+const authenticationEnabled = isAuthenticationEnabled();
+
+if (!authenticationEnabled) {
+    return Astro.redirect("/");
+}
 ---
 
 <Layout title={title}>
-    <main class="flex min-h-full flex-col justify-center py-12 px-4 bg-gray-50 dark:bg-gray-900 sm:px-6 lg:px-8">
+    <main class="flex min-h-full flex-col justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
             <div class="flex justify-center text-gray-800 dark:text-white">
                 <Logo />
@@ -15,8 +24,15 @@ const title: string = "ログイン画面";
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-            <div class="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
-                <form action="#" method="POST" class="space-y-6">
+            <div class="space-y-6 rounded-lg bg-white px-6 py-12 shadow-sm dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 sm:px-12">
+                {
+                    hasError && (
+                        <div class="rounded-md bg-red-50 p-4 dark:bg-red-500/15 dark:outline dark:outline-red-500/25 text-sm font-medium text-red-800 dark:text-red-200">
+                            ユーザー名またはパスワードが違います。
+                        </div>
+                    )
+                }
+                <form action={`/api/login?redirect=${encodeURIComponent(redirectTarget)}`} method="POST" class="space-y-6">
                     <div>
                         <label for="username" class="block text-sm/6 font-medium text-gray-900 dark:text-white">ユーザー名</label>
                         <div class="mt-2">
@@ -26,24 +42,28 @@ const title: string = "ログイン画面";
                                 name="username"
                                 required
                                 autocomplete="username"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                                class="block w-full rounded-md border-0 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
                             />
                         </div>
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm/6 font-medium text-gray-900 dark:text-white">パスワード</label>
-                        <div class="mt-2 relative">
+                        <div class="relative mt-2">
                             <input
                                 id="password"
                                 type="password"
                                 name="password"
                                 required
                                 autocomplete="current-password"
-                                class="block w-full rounded-md bg-white pl-3 pr-10 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                                class="block w-full rounded-md border-0 bg-white px-3 py-1.5 pr-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
                             />
-                            <button type="button" id="show-password" class="absolute size-6 right-2 inset-y-0 my-auto flex items-center justify-center rounded-sm hover:cursor-pointer">
-                                <span class="sr-only">パスワードを表示</span>
+                            <button
+                                type="button"
+                                id="toggle-password"
+                                class="absolute inset-y-0 right-2 my-auto flex size-6 items-center justify-center rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            >
+                                <span class="sr-only">パスワードを表示 / 非表示</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4" aria-hidden="true">
                                     <path
                                         stroke-linecap="round"
@@ -76,14 +96,15 @@ const title: string = "ログイン画面";
                                     </svg>
                                 </div>
                             </div>
-                            <label for="remember-me" class="block text-sm/6 text-gray-900 dark:text-white">ログイン情報を保存</label>
+                            <label for="remember-me" class="block text-sm/6 text-gray-900 dark:text-white">ログイン状態を保存</label>
                         </div>
                     </div>
 
                     <div>
+                        <input type="hidden" name="redirect" value={redirectTarget} />
                         <button
                             type="submit"
-                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-800 hover:cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-600 dark:shadow-none dark:hover:bg-indigo-800 dark:focus-visible:outline-indigo-500"
+                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-600 dark:shadow-none dark:hover:bg-indigo-800 dark:focus-visible:outline-indigo-500"
                         >
                             ログイン
                         </button>
@@ -92,4 +113,16 @@ const title: string = "ログイン画面";
             </div>
         </div>
     </main>
+
+    <script is:inline>
+        const toggleButton = document.getElementById("toggle-password");
+        const passwordField = document.getElementById("password");
+        if (toggleButton && passwordField) {
+            toggleButton.addEventListener("click", () => {
+                const nextType = passwordField.type === "password" ? "text" : "password";
+                passwordField.type = nextType;
+                toggleButton.setAttribute("aria-pressed", String(nextType === "text"));
+            });
+        }
+    </script>
 </Layout>
