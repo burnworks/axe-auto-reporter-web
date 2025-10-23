@@ -98,7 +98,7 @@ pm2 save
 1. `.gitignore` を編集、`git add` するなどして、`src/pages/results/*`, `public/results/`, `data/` を追跡対象に
 2. 「起動と初期設定」セクションに従い一度ローカル環境でダッシュボードを立ち上げ、初期設定を行い、`node script/scheduler.mjs --once` を実行して初回レポートを作成
 3. GitHub に push し、リポジトリの内容を Vercel にデプロイ（ドメインの設定含め基本設定を行う）
-4. .env の内容を環境変数（ Environment Variables）に設定
+4. `.env` の内容を環境変数（Environment Variables）に設定
 5. ダッシュボードにアクセスしてレポートが表示されることを確認
 6. GitHub Actions で任意のタイミングで `node script/scheduler.mjs --once` を実行し、指定のブランチに `push` するように設定（`USER_AUTHENTICATION=true` の場合は、GitHub Secrets に `.env` の内容を設定）
 7. 指定ブランチへの `push` をトリガーに Vercel にデプロイ
