@@ -135,6 +135,8 @@ AUTH_SESSION_SECRET=please-change-this-secret-value
 
 Ensure the `.env` file is excluded from version control after editing the values.
 
+![axe Auto Reporter Web login page screenshot](./public/img/screen-shot-axe-Auto-Reporter-Web-login.png)
+
 ## Known Limitations (as of v1.1.x)
 
 - User authentication remains optional. If you disable it, continue to operate the app in a closed environment and restrict access on the server side.

@@ -135,6 +135,8 @@ AUTH_SESSION_SECRET=please-change-this-secret-value
 
 なお、設定済みの `.env` をリポジトリに含めたりしないようにしてください。
 
+![axe Auto Reporter Web ログイン画面 スクリーンショット](./public/img/screen-shot-axe-Auto-Reporter-Web-login.png)
+
 ## 注意点（v1.1.x 時点）
 
 - ユーザー認証機能が無効の状態で、第三者がアクセスする公開サーバで実行するような利用方法はしないでください。
