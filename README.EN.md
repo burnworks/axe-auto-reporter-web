@@ -94,6 +94,17 @@ pm2 startup
 pm2 save
 ```
 
+### Deploying to Vercel (or similar)
+I haven’t actually tried this flow, but the deployment would likely look like this:
+
+1. Update `.gitignore` and run `git add` so that `src/pages/results/*`, `public/results/`, and `data/` are tracked.
+2. Follow the “Initial Setup” steps once on your local machine: start the dashboard, complete the initial settings, and run `node script/scheduler.mjs --once` to generate the first report.
+3. Push the changes to GitHub and deploy the repository to Vercel (set up the domain and other basics).
+4. Configure the `.env` values as Environment Variables on Vercel.
+5. Visit the dashboard and confirm that the report is visible.
+6. Configure GitHub Actions to run `node script/scheduler.mjs --once` on your schedule and push to the target branch (if `USER_AUTHENTICATION=true`, store the `.env` values in GitHub Secrets).
+7. Trigger Vercel deployments from pushes to the designated branch.
+
 ## User Authentication (Optional)
 Follow the steps below if you want to enable user authentication.
 
